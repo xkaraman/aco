@@ -5,10 +5,10 @@
 #include <string>
 #include <random>
 
-class ACOALgorithm {
+class AntSystem {
 public:
-ACOALgorithm();
-ACOALgorithm(std::vector<std::vector<double> > distances);
+AntSystem();
+// AntSystem(std::vector<std::vector<double> > distances);
 
 
 std::vector<int> getBestPath();
@@ -21,9 +21,9 @@ void setParameters(double maxIterations = 3000,
                    double transitionProbabilityB = 2,
                    double transitionProbabilityX = 0.1);
 
-void runACS(const std::string& distancesFilename);
+void runACOFromFile(const std::string& distancesFilename);
 void runACO();
-void runACO(const std::string& distancesFilename);
+// void runACO(const std::string& distancesFilename);
 
 private:
 std::vector<std::vector<double> > mDistances;
@@ -42,18 +42,18 @@ int mWidth;
 int mHeight;
 bool mStopped = false;
 
-std::vector<int> mOptimal;
+std::vector<int> mOptimalPath;
 double mOptimalLength;
 bool mCapacitated = false;
 
 std::vector<int> mDemand;
 std::vector<std::vector<int> > mBestList;
 
-std::random_device rd;
-std::mt19937 gen;
+std::random_device mRandomDevice;
+std::mt19937 mGen;
 
 // Helper functions
-std::vector< std::vector<double> > readCoords(std::string distancesFilename);
+std::vector< std::vector<double> > readCoords(const std::string& distancesFilename);
 std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> > coords);
 
 
