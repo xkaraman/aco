@@ -62,13 +62,27 @@ void AntSystem::runACO()
 	int nextMove;
 	double length;
 
-	std::vector<std::vector<double>> pheromoneDeposistedT;
-	std::vector<std::vector<double>> desirabilityTransitionH;
-
 	if( mDistances.empty() ){
 		std::cout << "Exiting" << ' \n';
 		return;
 	}
+
+	int numberDestinations = mDistances.size();
+	std::vector<std::vector<double>> pheromoneDeposistedT(numberDestinations,std::vector<double>(numberDestinations,0));
+	std::vector<std::vector<double>> desirabilityTransitionH(numberDestinations,std::vector<double>(numberDestinations,0));
+
+	double t0 = 0;
+	double nearNb;
+
+	std::vector<int> bestTour(numberDestinations + 1);
+
+	for (int i = 0; i < pheromoneDeposistedT.size(); ++i) {
+		for (int j = 0; j < pheromoneDeposistedT[i].size(); ++j) {
+
+		}
+	}
+
+
 
 }
 
