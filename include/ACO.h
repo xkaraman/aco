@@ -56,7 +56,8 @@ std::mt19937 mGen;
 std::vector< std::vector<double> > readCoords(const std::string& distancesFilename);
 std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> > coords);
 
-
+void printVector(const std::string title,const std::vector<std::vector<double>> vector) const;
+void processLine(const std::string line, std::vector<std::vector<double>>& vector) const;
 };
 
 #endif
