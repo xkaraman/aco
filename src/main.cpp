@@ -5,7 +5,7 @@
 int main(int argc, char const *argv[]) {
     AntSystem ACO;
 
-    ACO.runACOFromFile("../data/sahara");
+    ACO.runACOFromFile("../../data/qatar");
     auto bestLength = ACO.getBestLength();
     auto bestPath = ACO.getBestPath();
 
