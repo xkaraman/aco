@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-
+#include <cmath>
 #include "../include/ACO.h"
 
 AntSystem::AntSystem():
@@ -156,6 +156,67 @@ void AntSystem::runACO()
 	double tMin	= 0;
 	tMin = tMax * (1 - std::pow(0.05, 1 / numberDestinations)) / ((numberDestinations / 2 - 1) * std::pow(0.05, 1 / numberDestinations));
 	double totalRandomLength[500];
+	double randomLength = 0;
+
+	// TODO: Add 500 as parameter
+	// Represents how many random solutions to be used to initialise TO
+	int randomSolutions = 500;
+	for (int g = 0; g < randomSolutions; ++g) {
+		randomLength = 0;
+		std::vector<int> randomUnvisited;
+		int start = dis(mGen);
+		std::vector<int> randomTour(numberDestinations+1);
+		randomTour[0] =  start;
+
+		std::iota(randomUnvisited.begin(), randomUnvisited.end(), 0);
+	    randomUnvisited.erase(std::remove(randomUnvisited.begin(),randomUnvisited.end(),nextNode),randomUnvisited.end());
+
+	    int countRandom = 1;
+
+	    while (!randomUnvisited.empty()) {
+			std::uniform_int_distribution<int> dist(0, randomUnvisited.size() - 1);
+			int next = dist(mGen);
+			randomTour[countRandom] = randomUnvisited[next];
+		    randomUnvisited.erase(std::remove(randomUnvisited.begin(),randomUnvisited.end(),randomUnvisited[next]),randomUnvisited.end());
+		    randomLength = randomLength + mDistances[randomTour[countRandom-1]][randomTour[countRandom]];
+		    countRandom++;
+	    }
+
+	    randomTour[countRandom] = randomTour[0];
+	    randomLength = randomLength + mDistances[randomTour[countRandom-1]][randomTour[countRandom]];
+
+	    totalRandomLength[g] = randomLength;
+	}
+
+	double DC = 0;
+	double SDC = 0;
+	for (int i = 0; i < randomSolutions; ++i) {
+		DC = DC + std::abs(totalRandomLength[i] - totalRandomLength[i + 1]);
+		SDC = SDC + std::pow((totalRandomLength[i] - totalRandomLength[i + 1]) - DC, 2);
+	}
+
+	DC = DC / double(randomSolutions);
+	SDC = std::sqrt(float(SDC / randomSolutions));
+
+	double temperature = (DC + 3 * SDC) / (std::log(1.0f / 0.1f));
+	double activeLength = nearNeighbor;
+	std::vector<int> activeSolution(numberDestinations + 1);
+	activeSolution = bestTour;
+
+	// ACO ITERATIONS
+	while (iteration < mMaxIterations) {
+		if(mStopped){
+			return;
+		}
+
+		std::vector<int> tourIteration(numberDestinations + 1);
+		double lengthIteration = std::pow(nearNeighbor,10);
+
+	}
+
+
+
+
 
 
 }
