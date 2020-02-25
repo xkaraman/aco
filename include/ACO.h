@@ -38,26 +38,27 @@ double mTransitionProbabilityA = 1;
 double mTransitionProbabilityB = 2;
 double mTransitionProbabilityX = 0.1;
 
-int mWidth;
-int mHeight;
+
+int mWidth = 0;
+int mHeight = 0;
 bool mStopped = false;
 
 std::vector<int> mOptimalPath;
-double mOptimalLength;
+double mOptimalLength = 0.0;
 bool mCapacitated = false;
 
-std::vector<int> mDemand;
-std::vector<std::vector<int> > mBestList;
+//std::vector<int> mDemand;
+//std::vector<std::vector<int> > mBestList;
 
 std::random_device mRandomDevice;
 std::mt19937 mGen;
 
 // Helper functions
 std::vector< std::vector<double> > readCoords(const std::string& distancesFilename);
-std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> > coords);
+std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> >& coords);
 
-void printVector(const std::string title,const std::vector<std::vector<double>> vector) const;
-void processLine(const std::string line, std::vector<std::vector<double>>& vector) const;
+void printVector(const std::string& title,const std::vector<std::vector<double>>& vector) const;
+void processLine(const std::string& line, std::vector<std::vector<double>>& vector) const;
 };
 
 #endif
