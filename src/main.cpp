@@ -4,16 +4,15 @@
 
 int main(int argc, char const *argv[]) {
     AntSystem ACO;
+    ACO.runACOFromFile("data/djibouti");
+    double bestLength = ACO.getBestLength();
+    std::vector<int> bestPath = ACO.getBestPath();
 
-    ACO.runACOFromFile("data/sahara");
-    auto bestLength = ACO.getBestLength();
-    auto bestPath = ACO.getBestPath();
-
-    std::cout << "Best Length is: " << bestLength << '\n';
-    std::cout << "Best Path is: " << '\n';
-    for (size_t i = 0; i < bestPath.size(); i++) {
-        std::cout << bestPath[i] << ' ';
+    std::cout << "Best Length is: " << bestLength << std::endl;
+    std::cout << "Best Path is: " << bestPath.size() << std::endl;
+    for (int i = 0; i < bestPath.size(); ++i) {
+        std::cout << " " << bestPath[i];
     }
-
+    std::cout << std::endl;
     return 0;
 }
