@@ -4,10 +4,14 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-#include "../include/ACO.h"
+
+#include "twooptswap.hpp"
+#include "ACO.h"
 
 AntSystem::AntSystem():
-        mWidth()
+        mDistances()
+		,mDestinations()
+		,mWidth()
         ,mHeight()
         ,mOptimalLength()
         ,mGen(mRandomDevice())
@@ -47,9 +51,16 @@ double AntSystem::getBestLength()
 *********************************************************************/
 void AntSystem::runACOFromFile(const std::string& distancesFilename)
 {
-    mDestinations = readCoords(distancesFilename);
-    mDistances  = calcDistances(mDestinations);
+//    printVector("Destinations", mDestinations);
+	mDestinations = readCoords(distancesFilename);
+//    printVector("Destinations", mDestinations);
 
+//    printVector("Distances", mDistances);
+    mDistances  = calcDistances(mDestinations);
+//    printVector("Distances", mDistances);
+
+    setParameters(2000,30);
+//    std::cout << mMaxIterations << mNumAnts << std::endl;
     runACO();
 }
 /*********************************************************************
@@ -57,28 +68,28 @@ void AntSystem::runACOFromFile(const std::string& distancesFilename)
 *********************************************************************/
 void AntSystem::runACO()
 {
-	double sumP;
-	int nextMove;
-	double length;
+	double sumP = 0.0;
+	int nextMove = 0;
+	double length = 0.0;
 
 	if( mDistances.empty() ){
-		std::cout << "Exiting... Distance Matrix is Empty" << "\n";
+		std::cout << "Exiting... Distance Matrix is Empty" << std::endl;
 		return;
 	}
 
 	int numberDestinations = mDestinations.size();
+
+	// Initialize with zeros
 	std::vector<std::vector<double>> pheromoneDeposistedT(numberDestinations,std::vector<double>(numberDestinations,0));
 	std::vector<std::vector<double>> desirabilityTransitionH(numberDestinations,std::vector<double>(numberDestinations,0));
 
 	double t0 = 0.0;
 	std::vector<int> bestTour(numberDestinations + 1);
 
-//	printVector("Coordinates:",mDestinations);
-//	printVector("Matrix Table:",mDistances);
-	for (int i = 0; i < pheromoneDeposistedT.size(); ++i) {
-		for (int j = 0; j < pheromoneDeposistedT[i].size(); ++j) {
+	for (int i = 0; i < desirabilityTransitionH.size(); ++i) {
+		for (int j = 0; j < desirabilityTransitionH[i].size(); ++j) {
 			if (i == j) {
-				desirabilityTransitionH[i][j] = std::numeric_limits<double>::max();
+				desirabilityTransitionH[i][j] = 1 / std::numeric_limits<double>::max();
 			}
 			desirabilityTransitionH[i][j] = 1 / mDistances[i][j];
 		}
@@ -87,9 +98,9 @@ void AntSystem::runACO()
 	int nextNode = 0;
 	double bestLength = 0.0;
 
-	std::vector<double> results;
-	results.resize(mMaxIterations);
+	std::vector<double> results(mMaxIterations);
 
+	// Find best Length by neighbours
 	for (int i = 0; i < numberDestinations - 1; ++i) {
 		bestLength = bestLength + mDistances[i][i+1];
 	}
@@ -97,32 +108,29 @@ void AntSystem::runACO()
 	std::uniform_int_distribution<> dis(0, numberDestinations - 1);
 	double min = std::numeric_limits<double>::max();
 	int startingNode = dis(mGen);
-	std::vector<int> neighborUnvisited;
-	double nearNeighbor;
+	double nearNeighbor = 0.0;
+	int count = 0;
+	bestTour[count] = startingNode;
 
-	bestTour[0] = startingNode;
+	std::vector<int> neighborUnvisited(numberDestinations);
+	std::iota(neighborUnvisited.begin(), neighborUnvisited.end(), 0);
 
-	for (int i = 0; i < numberDestinations; ++i) {
-		neighborUnvisited.push_back(i);
-	}
-
-    // REMOVE ELEMENT WITH VALUE 'Startingnode' FROM VECTOR NBUnvisited
+    // REMOVE ELEMENT WITH VALUE 'startingNode' FROM VECTOR neighborUnvisited
 	neighborUnvisited.erase(std::remove(neighborUnvisited.begin(),neighborUnvisited.end(),startingNode),neighborUnvisited.end());
 
-	for (int i = 0; i < neighborUnvisited.size(); ++i) {
-		if ( min > mDistances[startingNode][neighborUnvisited[i] ]) {
-			min = mDistances[startingNode][neighborUnvisited[i] ];
-			nextNode = neighborUnvisited[i];
-		}
-	}
 
-	nearNeighbor = nearNeighbor + mDistances[startingNode][nextNode];
-	neighborUnvisited.erase(std::remove(neighborUnvisited.begin(),neighborUnvisited.end(), nextNode), neighborUnvisited.end());
-	bestTour[1] = nextNode;
-	startingNode = nextNode;
-
-	int count = 1;
-//	bool listEmpty = false;
+	// Find min between startingNode and all other neighbours that are unvisited
+//	for (int i = 0; i < neighborUnvisited.size(); ++i) {
+//		if ( min > mDistances[startingNode][neighborUnvisited[i] ]) {
+//			min = mDistances[startingNode][neighborUnvisited[i] ];
+//			nextNode = neighborUnvisited[i];
+//		}
+//	}
+//
+//	nearNeighbor = nearNeighbor + mDistances[startingNode][nextNode];
+//	neighborUnvisited.erase(std::remove(neighborUnvisited.begin(),neighborUnvisited.end(), nextNode), neighborUnvisited.end());
+//	bestTour[1] = nextNode;
+//	startingNode = nextNode;
 
 	while (!neighborUnvisited.empty()) {
 		count++;
@@ -139,38 +147,43 @@ void AntSystem::runACO()
 		startingNode = nextNode;
 //		std::cout << neighborUnvisited.size() << std::endl;
 	}
-//	std::cout << "Out of While" << std::endl;
+//	std::cout << "Out of While Count= " << count << std::endl;
+//	std::cout << "Best Tour size= " << bestTour.size() << std::endl;
 
+	// End where we started
 	bestTour[count + 1] = bestTour[0];
 	nearNeighbor = nearNeighbor + mDistances[bestTour[count]][bestTour[count + 1]];
 
-	for (int i = 0; i < numberDestinations; i++) {
-		for (int j = 0; j < numberDestinations; j++) {
-			t0 = (1 / ((nearNeighbor * numberDestinations)));
+	t0 = (1 / ((nearNeighbor * mNumAnts)));
+	for (int i = 0; i < pheromoneDeposistedT.size(); i++) {
+		for (int j = 0; j < pheromoneDeposistedT.size(); j++) {
 			pheromoneDeposistedT[i][j] = t0;
 		}
 	}
 
-	int iteration;
+	int iteration = 1;
 	double tMax = 0;
 	tMax = (1 / ((1 - mExhaustRatePheromones))) * (1 / nearNeighbor);
 	double tMin	= 0;
 	tMin = tMax * (1 - std::pow(0.05, 1 / numberDestinations)) / ((numberDestinations / 2 - 1) * std::pow(0.05, 1 / numberDestinations));
-	double totalRandomLength[500];
 	double randomLength = 0;
 
 	// TODO: Add 500 as parameter
-	// Represents how many random solutions to be used to initialise TO
+	// Represents how many random solutions to be used to initialise temperature for simulated annealing
 	int randomSolutions = 500;
+	std::vector<double> totalRandomLength(randomSolutions);
 	for (int g = 0; g < randomSolutions; ++g) {
 		randomLength = 0;
-		std::vector<int> randomUnvisited(numberDestinations);
-		int start = dis(mGen);
 		std::vector<int> randomTour(numberDestinations+1);
-		randomTour[0] =  start;
 
+		std::uniform_int_distribution<> dis(0, numberDestinations - 1);
+		int start = dis(mGen);
+
+		std::vector<int> randomUnvisited(numberDestinations);
 		std::iota(randomUnvisited.begin(), randomUnvisited.end(), 0);
-	    randomUnvisited.erase(std::remove(randomUnvisited.begin(),randomUnvisited.end(),nextNode),randomUnvisited.end());
+	    randomUnvisited.erase(std::remove(randomUnvisited.begin(),randomUnvisited.end(),start),randomUnvisited.end());
+
+		randomTour[0] =  start;
 
 	    int countRandom = 1;
 
@@ -189,15 +202,20 @@ void AntSystem::runACO()
 	    totalRandomLength[g] = randomLength;
 	}
 
-	double DC = 0;
-	double SDC = 0;
-	for (int i = 0; i < randomSolutions; ++i) {
+	double DC = 0.0;
+	double SDC = 0.0;
+	for (int i = 0; i < randomSolutions - 1; ++i) {
+//		std::cout << "TotalRandomLength= "<< totalRandomLength[i] << std::endl;
+//		std::cout << "TotalRandomLength= "<< totalRandomLength[i+1] << std::endl;
+
 		DC = DC + std::abs(totalRandomLength[i] - totalRandomLength[i + 1]);
-		SDC = SDC + std::pow((totalRandomLength[i] - totalRandomLength[i + 1]) - DC, 2);
+		SDC = SDC + std::pow((totalRandomLength[i] - totalRandomLength[i + 1]) - DC, 2.0);
 	}
 
-	DC = DC / double(randomSolutions);
-	SDC = std::sqrt(float(SDC / randomSolutions));
+	DC = DC / randomSolutions;
+//	std::cout << "DC is= " << DC << std::endl;
+	SDC = std::sqrt(SDC / randomSolutions); // @suppress("Ambiguous problem")
+//	std::cout << "SDC is=" << SDC << std::endl;
 
 	double temperature = (DC + 3 * SDC) / (std::log(1.0f / 0.1f));
 	double activeLength = nearNeighbor;
@@ -205,9 +223,15 @@ void AntSystem::runACO()
 	activeSolution = bestTour;
 
 	std::cout << "Starting ACO Iterations..." << std::endl;
+
+//	printVector("Coordinates:",mDestinations);
+//	printVector("Matrix Table:",mDistances);
+//	printVector("Pheromone", pheromoneDeposistedT);
+//	printVector("Desirabilty", desirabilityTransitionH);
+
 	// ACO ITERATIONS
 	while (iteration < mMaxIterations) {
-		std::cout << "Iteration " << iteration << std::endl;
+//		std::cout << "Iteration " << iteration << std::endl;
 		if(mStopped){
 			return;
 		}
@@ -227,25 +251,34 @@ void AntSystem::runACO()
 			std::iota(unvisited.begin(),unvisited.end(),0);
 	        unvisited.erase(std::remove(unvisited.begin(),unvisited.end(),tour[0]),unvisited.end());
 
-	        printVector("Desirabilty", desirabilityTransitionH);
+			std::vector<double> choice;
 	        for (int trip = 0; trip < numberDestinations - 1; ++trip) {
 				int c = tour[trip];
-				std::vector<double> choice;
+				choice.clear();
 
+//				std::cout << "-----Entering for unvisited---- Size: " << unvisited.size() << std::endl;
 				for (int i = 0; i < unvisited.size(); ++i) {
 					int j = unvisited[i];
-					std::cout << "J:= " << j << " C:= " << c << std::endl;
-					std::cout << "PheromeT: " << pheromoneDeposistedT[c][j];
-					std::cout <<" DesirabilityH: " << desirabilityTransitionH[c].size() <<std::endl;
+//					std::cout << "J:= " << j << " C:= " << c << std::endl;
+//					std::cout << "PheromeT: " << pheromoneDeposistedT[c][j];
+//					std::cout <<" DesirabilityH: " << desirabilityTransitionH[c].size() <<std::endl;
 					double value = std::pow(pheromoneDeposistedT[c][j], mTransitionProbabilityA ) * std::pow(desirabilityTransitionH[c][j], mTransitionProbabilityB);
 					choice.push_back(value);
 				}
+//				std::cout << "-----Exiting for unvisited---- Size: " << unvisited.size() << std::endl;
 
 				std::uniform_real_distribution<double> unif(0,1);
 				double random1 = unif(mGen);
+//				std::cout << "Random double= " << random1 << std::endl;
 
 				if (random1 < mExplorationProbability) {
 					int maxIndex = std::max_element(choice.begin(),choice.end()) - choice.begin();
+
+//					std::cout << "-----Choice List ----" << std::endl;
+//					for (int index = 0; index < choice.size(); ++index) {
+//						std::cout <<  choice[index]  << " ";
+//					}
+//					std::cout << "Max Index= " << maxIndex << std::endl;
 //					double maxValue = *std::max_element(choice.begin(), choice.end());
 					nextMove = unvisited[maxIndex];
 				} else {
@@ -254,8 +287,8 @@ void AntSystem::runACO()
 					for (int i = 0; i < unvisited.size(); ++i) {
 						int j = unvisited[i];
 						double value = (std::pow( pheromoneDeposistedT[c][j], mTransitionProbabilityA) * std::pow(desirabilityTransitionH[c][j], mTransitionProbabilityB));
-						sumP =+ j;
-						p.push_back(j);
+						sumP = sumP + value;
+						p.push_back(value);
 					}
 
 					double cumulativeSum = 0;
@@ -299,9 +332,39 @@ void AntSystem::runACO()
 			}
 		}
 
-		lengthIteration = 0;
+		int improve = 0;
+		while (improve <= randomSolutions) {
+//			std::cout << "Improve = " << improve << std::endl;
+			double newDistance = 0.0;
+			for (int i = 0; i < tourIteration.size() - 1; ++i) {
+				newDistance = newDistance + mDistances[tourIteration[i]][tourIteration[i+1]];
+			}
+
+			for (int i = 1; i < tourIteration.size() - 2; ++i) {
+				for (int j = i + 1; j < tourIteration.size() - 1; ++j) {
+					std::vector<int> newRoute;
+					newRoute = TwoOptSwap::optSwap(tourIteration,i,j);
+					double newLength = 0.0;
+					for (int l = 0; l < tourIteration.size() - 1; ++l) {
+						newLength += mDistances[newRoute[l]][newRoute[l+1]];
+					}
+
+					if ( newLength < newDistance) {
+						tourIteration = newRoute;
+						newDistance = newLength;
+						improve = 0;
+						break;
+					} else {
+						improve++;
+					}
+				}
+
+			}
+		}
+
+		lengthIteration = 0.0;
 		for (int i = 0; i < tourIteration.size() - 1; ++i) {
-			lengthIteration =+ mDistances[tourIteration[i]][tourIteration[i+1]];
+			lengthIteration = lengthIteration + mDistances[tourIteration[i]][tourIteration[i+1]];
 		}
 
 		if (lengthIteration < bestLength) {
@@ -321,7 +384,7 @@ void AntSystem::runACO()
 			}
 		}
 //
-		temperature = temperature * 0.999;
+		temperature = temperature * 0.9999;
 
 		for (size_t i = 0; i < pheromoneDeposistedT.size(); i++) {
 			for (size_t j = 0; j < pheromoneDeposistedT[i].size(); j++) {
@@ -332,7 +395,7 @@ void AntSystem::runACO()
 		tMax = (1 / ((1 - mExhaustRatePheromones))) * (1 / bestLength);
 	    tMin = tMax * (1 - std::pow(0.05, 1 / numberDestinations)) / ((numberDestinations / 2 - 1) * std::pow(0.05, 1 / numberDestinations));
 
-		for (int i = 0; i < activeSolution.size(); ++i) {
+		for (int i = 0; i < activeSolution.size()-1; ++i) {
 			pheromoneDeposistedT[activeSolution[i]][activeSolution[i+1]] = std::min(pheromoneDeposistedT[activeSolution[i]][activeSolution[i + 1]] + (pheromoneDeposistedT[activeSolution[i]][activeSolution[i + 1]] / (tMax + tMin)) * (1 / activeLength), tMax);
 		}
 
@@ -340,6 +403,7 @@ void AntSystem::runACO()
 		iteration++;
 	}
 
+//	std::cout << "Best Length= " << bestLength << std::endl;
 	mOptimalPath = bestTour;
 	mOptimalLength = bestLength;
 
@@ -381,12 +445,12 @@ std::vector< std::vector<double> > AntSystem::readCoords(const std::string& dist
 			processLine(line,coords);
 		}
 	}
+//	printVector("Vector: ",coords);
 
     if (myfile.bad())
         perror(("error while reading file " + distancesFilename).c_str());
 
     myfile.close();
-//	printVector("Vector: ",coords);
 
   return coords;
 }
@@ -395,41 +459,52 @@ void AntSystem::setParameters(double maxIterations, double numAnts,
 		double explorationProbability, double exhaustRatePheromones,
 		double transitionProbabilityA, double transitionProbabilityB,
 		double transitionProbabilityX) {
+
+	mMaxIterations = maxIterations;
+	mNumAnts = numAnts;
+	mExplorationProbability = explorationProbability;
+	mExhaustRatePheromones = exhaustRatePheromones;
+	mTransitionProbabilityA = transitionProbabilityA;
+	mTransitionProbabilityB = transitionProbabilityB;
+	mTransitionProbabilityX = transitionProbabilityX;
 }
 
 /*********************************************************************
 * Comment
 *********************************************************************/
-std::vector<std::vector<double> > AntSystem::calcDistances(const std::vector<std::vector<double> > coords){
-  std::vector<std::vector<double> > result(coords.size());
-  for (size_t i = 0; i < result.size(); i++) {
-    result[i].resize(result.size());
-  }
+std::vector<std::vector<double> > AntSystem::calcDistances(const std::vector<std::vector<double> >& coords){
+  std::vector<std::vector<double> > result(coords.size(),std::vector<double>(coords.size(),0));
+//  printVector("Distances",result);
 
-  for (size_t i = 0; i < coords.size(); i++) {
-    for (size_t j = i+1; j < coords.size(); j++) {
+//  for (size_t i = 0; i < result.size(); i++) {
+//    result[i].resize(result.size());
+//  }
+
+  for (int i = 0; i < coords.size(); i++) {
+    for (int j = i; j < coords.size(); j++) {
       result[i][j] = std::sqrt( std::pow( coords[i][0] - coords[j][0], 2.0 ) + std::pow(coords[i][1] - coords[j][1], 2.0 ) ); // @suppress("Ambiguous problem")
       result[j][i] = result[i][j];
     }
   }
 
+//  printVector("Distances", result);
 
   return result;
 }
 
-void AntSystem::printVector(const std::string title,
-		const std::vector<std::vector<double> > vector) const {
+void AntSystem::printVector(const std::string& title,
+		const std::vector<std::vector<double> >& vector) const {
 	std::cout << title << std::endl;
 	for (int i = 0; i < vector.size(); i++) {
-	std::cout<< i <<":\t";
-	for (int j = 0; j < vector[i].size(); j++) {
-	std::cout<< vector[i][j] << "\t";
+		std::cout<< i <<":\t";
+		for (int j = 0; j < vector[i].size(); j++) {
+			std::cout<< vector[i][j] << '\t';
+		}
+		std::cout << std::endl;
 	}
-	std::cout << std::endl;
-   }
 }
 
-void AntSystem::processLine(const std::string line,
+void AntSystem::processLine(const std::string& line,
 		std::vector<std::vector<double> > &vector) const {
 	std::stringstream ss(line);
 //	std::cout << line.c_str() << " \n";
