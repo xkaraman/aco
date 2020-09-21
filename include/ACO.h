@@ -21,7 +21,7 @@ void setParameters(double maxIterations = 3000,
                    double transitionProbabilityB = 2,
                    double transitionProbabilityX = 0.1);
 
-void runACOFromFile(const std::string& distancesFilename);
+void readDataFromFile(const std::string& distancesFilename);
 void runACO();
 // void runACO(const std::string& distancesFilename);
 
