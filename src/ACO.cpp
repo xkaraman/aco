@@ -49,7 +49,7 @@ double AntSystem::getBestLength()
 /*********************************************************************
 * Comment
 *********************************************************************/
-void AntSystem::runACOFromFile(const std::string& distancesFilename)
+void AntSystem::readDataFromFile(const std::string& distancesFilename)
 {
 //    printVector("Destinations", mDestinations);
 	mDestinations = readCoords(distancesFilename);
@@ -59,9 +59,9 @@ void AntSystem::runACOFromFile(const std::string& distancesFilename)
     mDistances  = calcDistances(mDestinations);
 //    printVector("Distances", mDistances);
 
-    setParameters(2000,30);
+    setParameters(150,50,0.98,0.3);
 //    std::cout << mMaxIterations << mNumAnts << std::endl;
-    runACO();
+//    runACO();
 }
 /*********************************************************************
 * Comment
@@ -170,7 +170,7 @@ void AntSystem::runACO()
 
 	// TODO: Add 500 as parameter
 	// Represents how many random solutions to be used to initialise temperature for simulated annealing
-	int randomSolutions = 500;
+	int randomSolutions = 1000;
 	std::vector<double> totalRandomLength(randomSolutions);
 	for (int g = 0; g < randomSolutions; ++g) {
 		randomLength = 0;
