@@ -7,6 +7,8 @@
 
 #include "AntSystemSimple.h"
 
+#include <iostream>
+
 AntSystemSimple::AntSystemSimple()
 :mNumOfAnts(),
  mNumOfDestinations(),
@@ -36,13 +38,16 @@ void AntSystemSimple::run() {
 
 	this->initialize();
 
+	std::cout<< "\nInit done: ";
 	for(Ant& ant : mAnts){
 		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
+		std::cout<< "\nNext node: ";
+
 	}
 }
 
 void AntSystemSimple::setParameters() {
-	mNumOfAnts = 20;
+	mNumOfAnts = 5;
 	mMaxCycles = 100;
 	mImportanceOfTrailA = 1.0;
 	mImportanceOfVisibilityB = 5.0;
@@ -81,7 +86,7 @@ void AntSystemSimple::initialize() {
 	for(Ant& ant : mAnts){
 
 		ant.init(mNumOfDestinations);
-		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
+//		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
 	}
 
 }

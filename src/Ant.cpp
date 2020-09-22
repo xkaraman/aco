@@ -28,7 +28,7 @@ void Ant::init() {
 
 void Ant::init(int numOfDestinations) {
 	unvisited.resize(numOfDestinations);
-	visited.resize(numOfDestinations);
+//	visited.resize(numOfDestinations);
 	probability.resize(numOfDestinations);
 	std::iota (std::begin(unvisited), std::end(unvisited), 0);
 	std::random_shuffle(unvisited.begin(),unvisited.end());
@@ -38,10 +38,15 @@ void Ant::init(int numOfDestinations) {
 }
 void Ant::nextNode(const std::vector<std::vector<double>> &intensity,const std::vector<std::vector<double>> &visibility,const double &a,const double &b) {
 	// First node to visit
+	std::cout<< "\nVisited is empty: " << visited.empty();
+
 	if(visited.empty()){
+		std::cout << "NextNode";
 		visited.push_back(unvisited.back());
 		unvisited.pop_back();
 		currentNode = visited.front();
+		printVectorInt("ANT::nextNode", unvisited);
+
 	}
 	else{
 		double sum = 0.0;
