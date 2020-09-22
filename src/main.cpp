@@ -1,7 +1,6 @@
 #include "AntSystemSimple.h"
-#include "utils.h"
-
 #include <iostream>
+#include "../include/utils.hpp"
 
 int main(int argc, char const *argv[]) {
 
@@ -11,8 +10,11 @@ int main(int argc, char const *argv[]) {
 	std::vector<std::vector<double>> coordinates;
 	std::vector<std::vector<double>> distances;
 
-	coordinates = readCoords("data/qatar");
+	coordinates = readCoords("data/sahara");
 	distances = calcDistances(coordinates);
+
+	printVector("MAIN::coordinates", coordinates);
+	printVector("MAIN::distances", distances);
 
 	antSystem.init();
 	antSystem.setInputDataMatrix(distances);

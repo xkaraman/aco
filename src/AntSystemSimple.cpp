@@ -79,6 +79,7 @@ void AntSystemSimple::initialize() {
 	}
 
 	for(Ant& ant : mAnts){
+		ant.init(mNumOfDestinations);
 		ant.nextNode();
 	}
 

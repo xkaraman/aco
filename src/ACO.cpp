@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "twooptswap.hpp"
-#include "ACO.h"
+#include "../include/twooptswap.hpp"
+#include "../include/ACO.h"
 
 AntSystem::AntSystem():
         mDistances()

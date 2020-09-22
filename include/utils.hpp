@@ -15,20 +15,30 @@
 #define INCLUDE_UTILS_H_
 
 // Helper functions
-void
+inline void
 printVector(const std::string& title,
 		const std::vector<std::vector<double> >& vector) {
 	std::cout << title << std::endl;
-	for (int i = 0; i < vector.size(); i++) {
-		std::cout<< i <<":\t";
-		for (int j = 0; j < vector[i].size(); j++) {
-			std::cout<< vector[i][j] << '\t';
+	for (auto row : vector){
+		for (auto col : row) {
+			std::cout << col << " ";
 		}
 		std::cout << std::endl;
 	}
+
 }
 
-void
+inline void
+printVectorInt(const std::string& title,
+		const std::vector<int>& vector) {
+	std::cout << title << std::endl;
+	for (auto item : vector){
+		std::cout << item << " ";
+	}
+	std::cout << std::endl;
+}
+
+inline void
 processLine(const std::string& line,
 		std::vector<std::vector<double> > &vector) {
 	std::stringstream ss(line);
@@ -41,7 +51,7 @@ processLine(const std::string& line,
 }
 
 
-std::vector< std::vector<double> >
+inline std::vector< std::vector<double> >
 readCoords(const std::string& distancesFilename){
 		int line_no = 0;
 		int dim = 0;
@@ -84,7 +94,7 @@ readCoords(const std::string& distancesFilename){
 
 	  return coords;
 }
-std::vector<std::vector<double> >
+inline std::vector<std::vector<double> >
 calcDistances(const std::vector<std::vector<double> >& coords){
 	std::vector<std::vector<double> > result(coords.size(),std::vector<double>(coords.size(),0));
 	//  printVector("Distances",result);
