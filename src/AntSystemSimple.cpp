@@ -37,7 +37,7 @@ void AntSystemSimple::run() {
 	this->initialize();
 
 	for(Ant& ant : mAnts){
-		ant.nextNode();
+		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
 	}
 }
 
@@ -79,8 +79,9 @@ void AntSystemSimple::initialize() {
 	}
 
 	for(Ant& ant : mAnts){
+
 		ant.init(mNumOfDestinations);
-		ant.nextNode();
+		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
 	}
 
 }
