@@ -100,7 +100,7 @@ void AntSystem::runACO()
 
 	std::vector<double> results(mMaxIterations);
 
-	// Find best Length by neighbours
+	// Find best Length by neighbors
 	for (int i = 0; i < numberDestinations - 1; ++i) {
 		bestLength = bestLength + mDistances[i][i+1];
 	}
