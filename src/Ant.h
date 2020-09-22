@@ -21,12 +21,14 @@ public:
 
 	void pickNode();
 
-	void nextNode();
+	void nextNode(const std::vector<std::vector<double>> &intensity,const std::vector<std::vector<double>> &visibility,const double &a,const double &b);
 	float calculateTransisionProbability();
 
 private:
-	std::vector<int> unvisited;
-	std::vector<int> visited;
+	std::vector<int> 	unvisited;
+	std::vector<int> 	visited;
+	std::vector<double> probability;
+
 	int currentNode;
 };
 
