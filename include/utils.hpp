@@ -18,24 +18,32 @@
 inline void
 printVector(const std::string& title,
 		const std::vector<std::vector<double> >& vector) {
-	std::cout << title << std::endl;
+	std::cout << title << "\n";
 	for (auto row : vector){
 		for (auto col : row) {
 			std::cout << col << " ";
 		}
-		std::cout << std::endl;
+		std::cout << "\n";
 	}
 
 }
 
 inline void
+printVector(const std::string& title,
+		const std::vector<double> & vector) {
+	std::cout << title << "\n";
+	for (auto row : vector){
+			std::cout << row << " ";
+		}
+}
+inline void
 printVectorInt(const std::string& title,
 		const std::vector<int>& vector) {
-	std::cout << title << std::endl;
+	std::cout << title << "\n";
 	for (auto item : vector){
 		std::cout << item << " ";
 	}
-	std::cout << std::endl;
+	std::cout << "\n";
 }
 
 inline void

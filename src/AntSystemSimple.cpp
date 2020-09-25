@@ -8,6 +8,7 @@
 #include "AntSystemSimple.h"
 
 #include <iostream>
+#include <utils.hpp>
 
 AntSystemSimple::AntSystemSimple()
 :mNumOfAnts(),
@@ -41,8 +42,6 @@ void AntSystemSimple::run() {
 	std::cout<< "\nInit done: ";
 	for(Ant& ant : mAnts){
 		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
-		std::cout<< "\nNext node: ";
-
 	}
 }
 
@@ -58,6 +57,17 @@ void AntSystemSimple::setParameters() {
 void AntSystemSimple::setInputDataMatrix(const std::vector<std::vector<double>> &inputMatrix){
 	mDistances = inputMatrix;
 	mNumOfDestinations = inputMatrix.size();
+
+	mIntensityOfTrail.resize(mNumOfDestinations);
+	for (auto& row : mIntensityOfTrail ) {
+		row.resize(mNumOfDestinations);
+	}
+
+	mVisibility.resize(mNumOfDestinations);
+	for (auto& row : mVisibility ) {
+		row.resize(mNumOfDestinations);
+	}
+
 }
 
 void AntSystemSimple::calculateVisibility() {
@@ -70,7 +80,7 @@ void AntSystemSimple::initialize() {
 				col = 0.00001;
 		}
 	}
-
+	printVector("Initialize::Intensity",mIntensityOfTrail);
 	for (auto& row : mDifIntensityOfTrial) {
 			for (auto& col: row) {
 				col = 0.0;
@@ -86,7 +96,7 @@ void AntSystemSimple::initialize() {
 	for(Ant& ant : mAnts){
 
 		ant.init(mNumOfDestinations);
-//		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
+		ant.nextNode(mIntensityOfTrail,mVisibility,mImportanceOfTrailA,mImportanceOfVisibilityB);
 	}
 
 }
