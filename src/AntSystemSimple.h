@@ -26,8 +26,10 @@ public:
 
 	void setParameters();
 
-	// TODO Helper Functions new module
 	void setInputDataMatrix(const std::vector<std::vector<double>> &inputMatrix);
+
+	double getBestLength() const;
+	const std::vector<int>& getBestTour() const;
 
 protected:
 	void calculateVisibility();
@@ -37,18 +39,21 @@ private:
 	std::vector<std::vector<double>> mDistances;
 	std::vector<std::vector<double>> mVisibility;
 	std::vector<std::vector<double>> mIntensityOfTrail;
-	std::vector<std::vector<double>> mDifIntensityOfTrial;
+	std::vector<std::vector<double>> mDifIntensityOfTrail;
 	std::vector<Ant> mAnts;
 
 	// Parameters for AS
 	double mEvaporationOfTrailR;
 	double mImportanceOfTrailA;
 	double mImportanceOfVisibilityB;
-	double mQuantityOfTrailRelated;
+	double mQuantityOfTrailRelatedQ;
 
 	int mNumOfDestinations;
 	int mNumOfAnts;
 	int mMaxCycles;
+
+	double mBestLength;
+	std::vector<int> mBestTour;
 };
 
 #endif /* SRC_ANTSYSTEMSIMPLE_H_ */
