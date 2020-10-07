@@ -36,6 +36,7 @@ printVector(const std::string& title,
 			std::cout << row << " ";
 		}
 }
+
 inline void
 printVectorInt(const std::string& title,
 		const std::vector<int>& vector) {
@@ -57,7 +58,6 @@ processLine(const std::string& line,
 //	std::cout << count << vector[count-1][0] << vector[count-1][1];
 //	std::cout << "Exit\n";
 }
-
 
 inline std::vector< std::vector<double> >
 readCoords(const std::string& distancesFilename){
