@@ -2,25 +2,51 @@
 #include <iostream>
 #include "../include/utils.hpp"
 
+clock_t START_TIMER;
+
+clock_t tic()
+{
+    return START_TIMER = clock();
+}
+
+void toc(clock_t start = START_TIMER)
+{
+    std::cout
+        << "Elapsed time: "
+        << (clock() - start) / (double)CLOCKS_PER_SEC << "s"
+        << std::endl;
+}
+
 int main(int argc, char const *argv[]) {
-
-
-	AntSystemSimple antSystem;
 
 	std::vector<std::vector<double>> coordinates;
 	std::vector<std::vector<double>> distances;
 
-	coordinates = readCoords("data/sahara");
+	coordinates = readCoords("data/djibouti");
 	distances = calcDistances(coordinates);
 
-	printVector("MAIN::coordinates", coordinates);
-	printVector("MAIN::distances", distances);
+//	printVector("MAIN::coordinates", coordinates);
+//	printVector("MAIN::distances", distances);
 
-	antSystem.init();
-	antSystem.setInputDataMatrix(distances);
-	antSystem.setParameters();
+	AntSystemSimple antSystem;
+	double sum = 0;
+	int repeat = 20;
 
-	antSystem.run();
+	for (int i = 0; i < repeat; ++i) {
+
+		antSystem.init();
+		antSystem.setInputDataMatrix(distances);
+		antSystem.setParameters();
+
+		tic();
+		antSystem.run();
+		toc();
+
+		std::cout << "Best Length is: " << antSystem.getBestLength() << std::endl;
+		printVectorInt("Best Path is: ", antSystem.getBestTour());
+		sum += antSystem.getBestLength();
+	}
+	std::cout << "Average Best Length is: " << sum/repeat<< std::endl;
 
 
 
