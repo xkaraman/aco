@@ -102,6 +102,7 @@ readCoords(const std::string& distancesFilename){
 
 	  return coords;
 }
+
 inline std::vector<std::vector<double> >
 calcDistances(const std::vector<std::vector<double> >& coords){
 	std::vector<std::vector<double> > result(coords.size(),std::vector<double>(coords.size(),0));
@@ -122,8 +123,5 @@ calcDistances(const std::vector<std::vector<double> >& coords){
 
 	return result;
 }
-
-
-
 
 #endif /* INCLUDE_UTILS_H_ */
