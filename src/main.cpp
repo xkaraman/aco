@@ -1,5 +1,7 @@
 #include "AntSystemSimple.h"
+
 #include <iostream>
+#include <limits>
 #include "../include/utils.hpp"
 
 clock_t START_TIMER;
@@ -30,6 +32,7 @@ int main(int argc, char const *argv[]) {
 
 	AntSystemSimple antSystem;
 	double sum = 0;
+	double min = std::numeric_limits<double>::max();
 	int repeat = 20;
 
 	for (int i = 0; i < repeat; ++i) {
@@ -45,7 +48,12 @@ int main(int argc, char const *argv[]) {
 		std::cout << "Best Length is: " << antSystem.getBestLength() << std::endl;
 		printVectorInt("Best Path is: ", antSystem.getBestTour());
 		sum += antSystem.getBestLength();
+
+		if (antSystem.getBestLength() < min){
+			min = antSystem.getBestLength();
+		}
 	}
+	std::cout << "Min Best Length is: " << min << std::endl;
 	std::cout << "Average Best Length is: " << sum/repeat<< std::endl;
 
 
