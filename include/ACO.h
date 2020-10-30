@@ -7,9 +7,11 @@
 
 class AntSystem {
 public:
-AntSystem();
-// AntSystem(std::vector<std::vector<double> > distances);
+	AntSystem();
+	virtual ~AntSystem();
 
+	void init();
+	void run();
 
 std::vector<int> getBestPath();
 double getBestLength();
@@ -54,11 +56,11 @@ std::random_device mRandomDevice;
 std::mt19937 mGen;
 
 // Helper functions
-std::vector< std::vector<double> > readCoords(const std::string& distancesFilename);
-std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> >& coords);
-
-void printVector(const std::string& title,const std::vector<std::vector<double>>& vector) const;
-void processLine(const std::string& line, std::vector<std::vector<double>>& vector) const;
+//std::vector< std::vector<double> > readCoords(const std::string& distancesFilename);
+//std::vector< std::vector<double> > calcDistances(const std::vector<std::vector<double> >& coords);
+//
+//void printVector(const std::string& title,const std::vector<std::vector<double>>& vector) const;
+//void processLine(const std::string& line, std::vector<std::vector<double>>& vector) const;
 };
 
 #endif
