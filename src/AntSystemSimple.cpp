@@ -18,8 +18,8 @@ AntSystemSimple::AntSystemSimple()
  mImportanceOfTrailA(),
  mImportanceOfVisibilityB(),
  mEvaporationOfTrailR(),
- mQuantityOfTrailRelatedQ(),
- mBestLength(std::numeric_limits<double>::max())
+ mQuantityOfTrailRelatedQ()
+// mOptimalLength(std::numeric_limits<double>::max())
 {
 	// TODO Auto-generated constructor stub
 	mAnts.resize(1);
@@ -27,7 +27,7 @@ AntSystemSimple::AntSystemSimple()
 	mIntensityOfTrail.resize(1,std::vector<double>(1));
 	mDifIntensityOfTrail.resize(1,std::vector<double>(1));
 	mVisibility.resize(1,std::vector<double>(1));
-	mBestTour.resize(1);
+	mOptimalTour.resize(1);
 }
 
 AntSystemSimple::~AntSystemSimple() {
@@ -37,7 +37,7 @@ AntSystemSimple::~AntSystemSimple() {
 void AntSystemSimple::init() {
 	this->setParameters();
 	mAnts.resize(mNumOfAnts);
-	mBestLength = std::numeric_limits<double>::max();
+	mOptimalLength = std::numeric_limits<double>::max();
 
 }
 
@@ -58,9 +58,9 @@ void AntSystemSimple::run() {
 		double length;
 		for(const Ant& ant:mAnts){
 			length = (ant.getTourLength());
-			if(length < mBestLength){
-				mBestLength = length;
-				mBestTour = ant.getTour();
+			if(length < mOptimalLength){
+				mOptimalLength = length;
+				mOptimalTour = ant.getTour();
 			}
 		}
 //		std::cout << "======Best tour found =====\n";
@@ -99,11 +99,11 @@ void AntSystemSimple::run() {
 }
 
 void AntSystemSimple::setParameters() {
-	mNumOfAnts = 60;
-	mMaxCycles = 40;
+	mNumOfAnts = 40; // Optimal value ~= number of nodes
+	mMaxCycles = 200;
 	mImportanceOfTrailA = 2.5;
-	mImportanceOfVisibilityB = 1.0;
-	mQuantityOfTrailRelatedQ = 50.0;
+	mImportanceOfVisibilityB = 3.5;
+	mQuantityOfTrailRelatedQ = 100.0;
 	mEvaporationOfTrailR = 0.5;
 }
 
@@ -159,9 +159,9 @@ void AntSystemSimple::initialize() {
 }
 
 double AntSystemSimple::getBestLength() const {
-	return mBestLength;
+	return mOptimalLength;
 }
 
 const std::vector<int>& AntSystemSimple::getBestTour() const {
-	return mBestTour;
+	return mOptimalTour;
 }

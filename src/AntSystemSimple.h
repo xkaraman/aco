@@ -12,11 +12,12 @@
  * Based on http://www.cs.unibo.it/babaoglu/courses/cas05-06/tutorials/Ant_Colony_Optimization.pdf
  */
 #include "Ant.h"
+#include "AbstractAntSystem.h"
 
 #include <string>
 #include <vector>
 
-class AntSystemSimple {
+class AntSystemSimple : public AbstractAntSystem {
 public:
 	AntSystemSimple();
 	virtual ~AntSystemSimple();
@@ -52,8 +53,8 @@ private:
 	int mNumOfAnts;
 	int mMaxCycles;
 
-	double mBestLength;
-	std::vector<int> mBestTour;
+//	double mOptimalLength;
+//	std::vector<int> mOptimalTour;
 };
 
 #endif /* SRC_ANTSYSTEMSIMPLE_H_ */
