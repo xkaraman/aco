@@ -29,8 +29,8 @@ public:
 
 	void setInputDataMatrix(const std::vector<std::vector<double>> &inputMatrix);
 
-	double getBestLength() const;
-	const std::vector<int>& getBestTour() const;
+//	double getBestLength() const;
+//	const std::vector<int>& getBestTour() const;
 
 protected:
 	void calculateVisibility();

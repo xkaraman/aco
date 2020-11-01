@@ -22,6 +22,7 @@ public:
 
 	void startNode();
 	void computeTour(const std::vector<std::vector<double>> &intensity,const std::vector<std::vector<double>> &visibility,const double &a,const double &b);
+	void computeTour(const std::vector<std::vector<double>> &intensity,const std::vector<std::vector<double>> &visibility,const double &a,const double &b,const double &exploration);
 	double computeTourLength(const std::vector<std::vector<double>> &distances);
 	bool edgeExists(const int i,const int j) const;
 	void reset(const int numOfDestinations);

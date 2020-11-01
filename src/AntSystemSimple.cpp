@@ -28,6 +28,7 @@ AntSystemSimple::AntSystemSimple()
 	mDifIntensityOfTrail.resize(1,std::vector<double>(1));
 	mVisibility.resize(1,std::vector<double>(1));
 	mOptimalTour.resize(1);
+	this->setParameters();
 }
 
 AntSystemSimple::~AntSystemSimple() {
@@ -35,16 +36,16 @@ AntSystemSimple::~AntSystemSimple() {
 }
 
 void AntSystemSimple::init() {
-	this->setParameters();
 	mAnts.resize(mNumOfAnts);
 	mOptimalLength = std::numeric_limits<double>::max();
+
+	this->initialize();
+//	std::cout<< "======Init done=======\n";
 
 }
 
 void AntSystemSimple::run() {
 
-	this->initialize();
-//	std::cout<< "======Init done=======\n";
 
 	int cycleCounter = 0;
 	while (cycleCounter < mMaxCycles) {
@@ -100,7 +101,7 @@ void AntSystemSimple::run() {
 
 void AntSystemSimple::setParameters() {
 	mNumOfAnts = 40; // Optimal value ~= number of nodes
-	mMaxCycles = 200;
+	mMaxCycles = 50;
 	mImportanceOfTrailA = 2.5;
 	mImportanceOfVisibilityB = 3.5;
 	mQuantityOfTrailRelatedQ = 100.0;
@@ -128,6 +129,11 @@ void AntSystemSimple::setInputDataMatrix(const std::vector<std::vector<double>> 
 }
 
 void AntSystemSimple::calculateVisibility() {
+	for (auto i = 0 ; i < mVisibility.size() ; ++i) {
+			for (auto j = 0 ; j < mVisibility.size() ; ++j) {
+				mVisibility[i][j] = 1.0 / mDistances[i][j];
+		}
+	}
 }
 
 void AntSystemSimple::initialize() {
@@ -146,11 +152,13 @@ void AntSystemSimple::initialize() {
 	}
 //	printVector("Initialize::DifIntensity",mDifIntensityOfTrail);
 
-	for (auto i = 0 ; i < mVisibility.size() ; ++i) {
-			for (auto j = 0 ; j < mVisibility.size() ; ++j) {
-				mVisibility[i][j] = 1.0 / mDistances[i][j];
-		}
-	}
+//	for (auto i = 0 ; i < mVisibility.size() ; ++i) {
+//			for (auto j = 0 ; j < mVisibility.size() ; ++j) {
+//				mVisibility[i][j] = 1.0 / mDistances[i][j];
+//		}
+//	}
+
+	calculateVisibility();
 
 	for(Ant& ant : mAnts){
 		ant.init(mNumOfDestinations);
@@ -158,10 +166,10 @@ void AntSystemSimple::initialize() {
 	}
 }
 
-double AntSystemSimple::getBestLength() const {
-	return mOptimalLength;
-}
-
-const std::vector<int>& AntSystemSimple::getBestTour() const {
-	return mOptimalTour;
-}
+//double AntSystemSimple::getBestLength() const {
+//	return mOptimalLength;
+//}
+//
+//const std::vector<int>& AntSystemSimple::getBestTour() const {
+//	return mOptimalTour;
+//}

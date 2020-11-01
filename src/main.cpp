@@ -1,4 +1,5 @@
 #include "AntSystemSimple.h"
+#include "../include/ACO.h"
 
 #include <iostream>
 #include <limits>
@@ -30,23 +31,25 @@ int main(int argc, char const *argv[]) {
 //	printVector("MAIN::coordinates", coordinates);
 //	printVector("MAIN::distances", distances);
 
-	AntSystemSimple antSystem;
+//	AntSystemSimple antSystem;
+	AntColonyOptimizationSystem antSystem;
+
 	double sum = 0;
 	double min = std::numeric_limits<double>::max();
 	int repeat = 20;
 
 	for (int i = 0; i < repeat; ++i) {
 
-		antSystem.init();
 		antSystem.setInputDataMatrix(distances);
 		antSystem.setParameters();
 
+		antSystem.init();
 		tic();
 		antSystem.run();
 		toc();
 
 		std::cout << "Best Length is: " << antSystem.getBestLength() << std::endl;
-		printVectorInt("Best Path is: ", antSystem.getBestTour());
+		printVectorInt("Best Path is: ", antSystem.getBestPath());
 		sum += antSystem.getBestLength();
 
 		if (antSystem.getBestLength() < min){
